@@ -35,7 +35,7 @@ class OrderController extends Controller
         $order_detail = OrderDetail::find($order_detail_id);
         if(is_null($order_detail)) {
             return response()->json([
-                "message" => "Order not found"
+                "message" => "Order Detail not found"
             ], 404);
         }else{
             return Customer::select('customer.*', 'order.id as order_id', 'order.*', 'order_detail.id as order_detail_id', 'order_detail.*', 'product.id as product_id', 'product.*')->leftJoin("order", "order.customer_code", "=", "customer.customer_code")
@@ -45,11 +45,24 @@ class OrderController extends Controller
     }
     public function update(Request $request, $id)
     {
+        $order_detail = OrderDetail::find($id);
+
+        if(is_null($order_detail)) {
+            return response()->json([
+                "message" => "Order Detail not found"
+            ], 404);
+        }else {
+            $order_detail->update($request->all());
+        }
+    }
+
+    public function update_status(Request $request, $id)
+    {
         $order = Order::find($id);
 
         if(is_null($order)) {
             return response()->json([
-                "message" => "Order Detail not found"
+                "message" => "Order not found"
             ], 404);
         }else {
             $order->update($request->all());
